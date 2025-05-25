@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Ordinosaures - Musée des Arts et Métiers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #2d2d5f 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            padding: 2rem 0;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.3); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b8b8b8;
+            margin-bottom: 2rem;
+        }
+
+        .intro {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .intro h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #4ecdc4;
+        }
+
+        .intro p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            color: #e0e0e0;
+        }
+
+        .computers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .computer-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .computer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .computer-card:hover::before {
+            left: 100%;
+        }
+
+        .computer-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: #4ecdc4;
+        }
+
+        .computer-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #ff6b6b;
+        }
+
+        .computer-year {
+            font-size: 1rem;
+            color: #4ecdc4;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .computer-specs {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .computer-specs li {
+            padding: 0.3rem 0;
+            color: #e0e0e0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .computer-specs li:last-child {
+            border-bottom: none;
+        }
+
+        .computer-description {
+            color: #b8b8b8;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, rgba(30, 30, 60, 0.95), rgba(20, 20, 40, 0.95));
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #ff6b6b;
+        }
+
+        .timeline {
+            margin: 4rem 0;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #4ecdc4, #ff6b6b);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            width: 45%;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: #4ecdc4;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px #4ecdc4;
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.5);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cnam-link {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .cnam-link:hover {
+            color: #ff6b6b;
+        }
+
+        @media (max-width: 768px) {
+            .logo { font-size: 2rem; }
+            .intro h2 { font-size: 2rem; }
+            .computers-grid { grid-template-columns: 1fr; }
+            .timeline::before { left: 20px; }
+            .timeline-item { flex-direction: column !important; }
+            .timeline-content { width: calc(100% - 40px); margin-left: 40px; }
+            .timeline-dot { left: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <header>
+        <div class="container">
+            <h1 class="logo">ORDINOSAURES</h1>
+            <p class="subtitle">Les Pionniers de l'Informatique au Musée des Arts et Métiers</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="intro">
+            <div class="container">
+                <h2>Voyage dans l'Histoire de l'Informatique</h2>
+                <p>Découvrez les machines qui ont révolutionné notre monde. Du premier micro-ordinateur français aux icônes américaines, ces "ordinosaures" conservés au Musée des Arts et Métiers témoignent de l'évolution fulgurante de la technologie informatique des années 1970 à 1980.</p>
+            </div>
+        </section>
+
+        <section class="computers-grid container">
+            <div class="computer-card" onclick="openModal('micral')">
+                <h3 class="computer-name">Micral N</h3>
+                <div class="computer-year">1973</div>
+                <ul class="computer-specs">
+                    <li><strong>Processeur:</strong> Intel 8008</li>
+                    <li><strong>Mémoire:</strong> 256 octets à 16 Ko</li>
+                    <li><strong>Prix:</strong> 8 500 francs</li>
+                    <li><strong>Pays:</strong> France</li>
+                </ul>
+                <p class="computer-description">Premier micro-ordinateur au monde, conçu par André Truong et François Gernelle. Une révolution française dans l'informatique personnelle.</p>
+            </div>
+
+            <div class="computer-card" onclick="openModal('zx81')">
+                <h3 class="computer-name">Sinclair ZX81</h3>
+                <div class="computer-year">1981</div>
+                <ul class="computer-specs">
+                    <li><strong>Processeur:</strong> Zilog Z80A</li>
+                    <li><strong>Mémoire:</strong> 1 Ko (extensible)</li>
+                    <li><strong>Prix:</strong> £70 (kit)</li>
+                    <li><strong>Pays:</strong> Royaume-Uni</li>
+                </ul>
+                <p class="computer-description">Ordinateur ultra-compact et abordable qui a démocratisé l'informatique domestique en Europe grâce à son prix révolutionnaire.</p>
+            </div>
+
+            <div class="computer-card" onclick="openModal('oric')">
+                <h3 class="computer-name">Oric-1</h3>
+                <div class="computer-year">1983</div>
+                <ul class="computer-specs">
+                    <li><strong>Processeur:</strong> MOS 6502A</li>
+                    <li><strong>Mémoire:</strong> 16 Ko ou 48 Ko</li>
+                    <li><strong>Affichage:</strong> 240×200 pixels</li>
+                    <li><strong>Pays:</strong> France</li>
+                </ul>
+                <p class="computer-description">Concurrent français de l'Apple II, reconnu pour ses capacités graphiques et sonores avancées pour l'époque.</p>
+            </div>
+
+            <div class="computer-card" onclick="openModal('apple2')">
+                <h3 class="computer-name">Apple II</h3>
+                <div class="computer-year">1977</div>
+                <ul class="computer-specs">
+                    <li><strong>Processeur:</strong> MOS 6502</li>
+                    <li><strong>Mémoire:</strong> 4 Ko à 48 Ko</li>
+                    <li><strong>Affichage:</strong> Couleur 280×192</li>
+                    <li><strong>Prix:</strong> $1,298</li>
+                </ul>
+                <p class="computer-description">L'ordinateur qui a lancé Apple vers le succès. Premier ordinateur personnel produit en masse avec affichage couleur intégré.</p>
+            </div>
+
+            <div class="computer-card" onclick="openModal('ibmpc')">
+                <h3 class="computer-name">IBM PC</h3>
+                <div class="computer-year">1981</div>
+                <ul class="computer-specs">
+                    <li><strong>Processeur:</strong> Intel 8088</li>
+                    <li><strong>Mémoire:</strong> 16 Ko à 256 Ko</li>
+                    <li><strong>Stockage:</strong> Disquettes 5¼"</li>
+                    <li><strong>Prix:</strong> $1,565</li>
+                </ul>
+                <p class="computer-description">L'ordinateur qui a défini les standards PC encore utilisés aujourd'hui. Son architecture ouverte a révolutionné l'industrie.</p>
+            </div>
+
+            <div class="computer-card" onclick="openModal('commodore')">
+                <h3 class="computer-name">Commodore 64</h3>
+                <div class="computer-year">1982</div>
+                <ul class="computer-specs">
+                    <li><strong>Processeur:</strong> MOS 6510</li>
+                    <li><strong>Mémoire:</strong> 64 Ko</li>
+                    <li><strong>Son:</strong> Puce SID</li>
+                    <li><strong>Prix:</strong> $595</li>
+                </ul>
+                <p class="computer-description">L'ordinateur personnel le plus vendu de tous les temps avec 17 millions d'unités. Révolutionnaire pour le jeu et la musique.</p>
+            </div>
+        </section>
+
+        <section class="timeline container">
+            <h2 style="text-align: center; margin-bottom: 3rem; color: #4ecdc4; font-size: 2.5rem;">Chronologie des Innovations</h2>
+            
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h3 style="color: #ff6b6b;">1973 - Micral N</h3>
+                    <p>Premier micro-ordinateur commercial au monde, développé en France par André Truong.</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h3 style="color: #ff6b6b;">1977 - Apple II</h3>
+                    <p>Révolution de l'informatique personnelle avec le premier ordinateur couleur produit en masse.</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h3 style="color: #ff6b6b;">1981 - IBM PC & ZX81</h3>
+                    <p>L'IBM PC définit les standards, tandis que le ZX81 démocratise l'informatique domestique.</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h3 style="color: #ff6b6b;">1982-1983 - C64 & Oric</h3>
+                    <p>L'âge d'or des ordinateurs personnels avec des machines dédiées au jeu et à la créativité.</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 - Projet BTS SIO - Visite du <a href="https://www.arts-et-metiers.net/" class="cnam-link" target="_blank">Musée des Arts et Métiers - CNAM</a></p>
+            <p style="margin-top: 1rem; color: #888;">Ces machines historiques sont exposées dans les collections permanentes du musée</p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="micral" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="color: #ff6b6b; margin-bottom: 1rem;">Micral N (1973)</h2>
+            <p><strong>Le Pioneer français de l'informatique</strong></p>
+            <p>Le Micral N, développé par la société R2E (Réalisations et Études Électroniques), est reconnu comme le premier micro-ordinateur commercial au monde. Conçu par André Truong et François Gernelle, il précède même l'Altair 8800 américain.</p>
+            <p><strong>Innovation technique :</strong> Basé sur le processeur Intel 8008, il utilisait des circuits intégrés TTL et était programmable en langage machine. Sa conception modulaire permettait diverses configurations selon les besoins.</p>
+            <p><strong>Impact historique :</strong> Cette machine française a ouvert la voie à l'ère des micro-ordinateurs, prouvant qu'il était possible de créer des ordinateurs compacts et abordables pour les entreprises.</p>
+        </div>
+    </div>
+
+    <div id="zx81" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="color: #ff6b6b; margin-bottom: 1rem;">Sinclair ZX81 (1981)</h2>
+            <p><strong>La démocratisation de l'informatique</strong></p>
+            <p>Créé par Sir Clive Sinclair, le ZX81 a révolutionné l'accès à l'informatique personnelle grâce à son prix ultra-compétitif de £70 en kit et £100 assemblé.</p>
+            <p><strong>Conception minimaliste :</strong> Avec seulement 1 Ko de RAM et un clavier à membrane, le ZX81 privilégiait l'accessibilité. Son boîtier en plastique blanc est devenu iconique.</p>
+            <p><strong>Succès populaire :</strong> Plus de 1,5 million d'unités vendues, principalement en Europe. Il a initié toute une génération à la programmation BASIC.</p>
+        </div>
+    </div>
+
+    <div id="oric" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="color: #ff6b6b; margin-bottom: 1rem;">Oric-1 (1983)</h2>
+            <p><strong>L'excellence française dans l'informatique</strong></p>
+            <p>Développé par la société française Tangerine Computer Systems, l'Oric-1 était une réponse européenne à la domination américaine dans l'informatique personnelle.</p>
+            <p><strong>Capacités avancées :</strong> Doté d'un processeur 6502A cadencé à 1 MHz, il offrait des graphismes haute résolution (240×200) et un synthétiseur sonore intégré révolutionnaire.</p>
+            <p><strong>Héritage culturel :</strong> L'Oric a marqué l'histoire de l'informatique française et a inspiré de nombreux développeurs européens. Sa puce sonore AY-3-8912 était particulièrement appréciée des musiciens.</p>
+        </div>
+    </div>
+
+    <div id="apple2" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="color: #ff6b6b; margin-bottom: 1rem;">Apple II (1977)</h2>
+            <p><strong>La révolution de Steve Wozniak</strong></p>
+            <p>Conçu par Steve Wozniak et commercialisé par Apple Computer, l'Apple II a défini ce que devait être un ordinateur personnel moderne.</p>
+            <p><strong>Innovations marquantes :</strong> Premier ordinateur avec affichage couleur intégré, slots d'extension, et boîtier en plastique beige devenu standard. Son architecture ouverte encourageait l'innovation.</p>
+            <p><strong>Écosystème complet :</strong> VisiCalc, le premier tableur, a été développé pour l'Apple II, transformant l'ordinateur personnel en outil professionnel incontournable.</p>
+            <p><strong>Longévité exceptionnelle :</strong> Produit jusqu'en 1993, l'Apple II a connu de nombreuses évolutions et reste l'un des ordinateurs les plus influents de l'histoire.</p>
+        </div>
+    </div>
+
+    <div id="ibmpc" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="color: #ff6b6b; margin-bottom: 1rem;">IBM PC (1981)</h2>
+            <p><strong>La naissance du standard PC</strong></p>
+            <p>L'IBM Personal Computer a révolutionné l'industrie informatique en établissant un standard ouvert qui perdure aujourd'hui.</p>
+            <p><strong>Architecture révolutionnaire :</strong> Contrairement aux pratiques IBM, le PC utilisait des composants standards (Intel 8088, MS-DOS) permettant la compatibilité et la concurrence.</p>
+            <p><strong>Impact industriel :</strong> Cette approche ouverte a créé l'écosystème PC-compatible, générant des milliards de dollars et permettant l'émergence de géants comme Microsoft et Intel.</p>
+            <p><strong>Héritage durable :</strong> Les PC modernes descendent directement de cette machine, conservant la compatibilité avec les logiciels développés il y a plus de 40 ans.</p>
+        </div>
+    </div>
+
+    <div id="commodore" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="color: #ff6b6b; margin-bottom: 1rem;">Commodore 64 (1982)</h2>
+            <p><strong>Le roi des ordinateurs familiaux</strong></p>
+            <p>Avec 17 millions d'unités vendues, le Commodore 64 détient le record de l'ordinateur personnel le plus vendu de l'histoire.</p>
+            <p><strong>Puissance remarquable :</strong> 64 Ko de RAM (une quantité énorme pour l'époque), processeur 6510, et surtout la légendaire puce sonore SID capable de synthèse sonore avancée.</p>
+            <p><strong>Culture du jeu :</strong> Le C64 a défini l'âge d'or du jeu vidéo sur ordinateur personnel, avec des titres comme "The Last Ninja", "Bubble Bobble", et les créations de compositeurs comme Rob Hubbard.</p>
+            <p><strong>Accessibilité :</strong> Vendu dans les grands magasins à un prix abordable, il a introduit l'informatique dans des millions de foyers à travers le monde.</p>
+        </div>
+    </div>
+
+    <script>
+        // Create animated stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numberOfStars = 100;
+
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Modal functionality
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+
+            // Close modal when clicking X
+            document.querySelectorAll('.close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', function() {
+                    closeModal(this.closest('.modal'));
+                });
+            });
+
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeModal(modal);
+                    }
+                });
+            });
+
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        if (modal.style.display === 'block') {
+                            closeModal(modal);
+                        }
+                    });
+                }
+            });
+
+            // Animate elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Apply animation to cards
+            document.querySelectorAll('.computer-card, .timeline-item').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+        });
+
+        // Smooth scrolling for links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
